@@ -1,2 +1,2 @@
 # smash
-Smash - Super Magic Asthetic SHell
+Smash - Super MAgic SHell
