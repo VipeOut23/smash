@@ -2,7 +2,7 @@
 #define ERROR_H__
 
 #include <stdio.h>
-#include <stdlib.c>
+#include <stdlib.h>
 #include <string.h>
 
 #define ERR_COUNT 6

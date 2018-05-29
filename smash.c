@@ -4,19 +4,31 @@
 #include "utils.h"
 #include "strings.h"
 #include "error.h"
+#include "parser.h"
+
+sm_error read_command(char *buff, size_t *nread);
+sm_error build_promt();
+sm_error before_promt_hook();
+sm_error promt();
 
 sm_error read_command(char *buff, size_t *nread)
 {
 	size_t max = *nread;
 	*nread = 0;
 	while(*nread < max) {
-		if((buff[(*nread)++] = getc(stdin)) == EOF)
+		if((buff[*nread] = getc(stdin)) == EOF)
 			return unexpected_eof;
-		if(buff[*nread-1] == '\n')
+		if(buff[(*nread)++] == '\n')
 			return ok;
 	}
 
 	return buffer_overflow;
+}
+
+inline sm_error before_promt_hook()
+{
+	utils_update_pwd();
+	return ok;
 }
 
 sm_error promt()
@@ -25,16 +37,17 @@ sm_error promt()
 	size_t	 nread = 128;
 	char	 buff[128];
 
+	before_promt_hook();
+	if(sm.flags.promt_refresh_needed)
+		if(err = build_promt()) return err;
+
 	printf(sm.promt);
 	fflush(stdout);
 
 	if(err = read_command(buff, &nread)) return err;
 	buff[nread++] = '\0';
 
-	fwrite(buff, 1, nread, stdout);
-	fflush(stdout);
-
-	return ok;
+	return parse_command(buff);
 }
 
 sm_error build_promt()
@@ -42,9 +55,9 @@ sm_error build_promt()
 	sm_error err;
 	off_t	 off = 0;
 	off_t	 off_b = 0;
-	size_t	 nwrite, buff_max = 256;
+	size_t	 nwrite, buff_max = sizeof(sm.promt);
 	int	 escape = 0;
-	char	 buff[buff_max];
+	char	 *buff = sm.promt;
 
 	for(char c = str_promt[off++];
 	    c != '\0' && off_b < buff_max;
@@ -60,6 +73,10 @@ sm_error build_promt()
 			case 'u':
 				err = utils_username((char*) buff+off_b, &nwrite);
 				break;
+			case 'd':
+				err = utils_pwd((char*) buff+off_b, &nwrite);
+				break;
+			default: nwrite = 0;
 			}
 
 			if(err) return err;
@@ -73,10 +90,7 @@ sm_error build_promt()
 	}
 
 	buff[off_b] = '\0';
-
-	free(sm.promt);
-	sm.promt = malloc(strlen(buff)+1);
-	strcpy(sm.promt, buff);
+	sm.flags.promt_refresh_needed = 0;
 
 	return ok;
 }
@@ -86,15 +100,13 @@ int main(int argc, char **argv)
 	sm_error err;
 	char	 buff[1024];
 
-	err = build_promt();
-	
+	sm = (sm_values){0};
+
 	if(!err)
 	while(!(err = promt()));
 
 	err_desc(err, buff, 1024);
 	puts(buff);
-
-	free(sm.promt);
 
 	return 0;
 }
