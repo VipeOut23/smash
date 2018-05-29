@@ -64,7 +64,7 @@ sm_error tokenize(char *cmd, token *t)
 	return ok;
 }
 
-sm_error cleanup_tokenchain(token *t)
+void cleanup_tokenchain(token *t)
 {
 	token *tmp;
 	while(t) {
