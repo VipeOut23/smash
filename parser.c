@@ -8,20 +8,28 @@ sm_error parse_command(char *cmd)
 
 	tokenchain = malloc(sizeof(token));
 
-	if((err = tokenize(cmd, tokenchain))) {
-		cleanup_tokenchain(tokenchain);
-		err_desc(err, err_dsc, sizeof(err_dsc));
-		printf("%s: - %s\n", err_dsc, err_get_last());
-		return err;
-	}         	
+	if((err = tokenize(cmd, tokenchain)))
+		goto err_print;
 
-	for(token *t = tokenchain; t; t = t->next) {
-		printf("Token: %s\n", t->val);
+	switch( (err = eval(tokenchain)) ) {
+	case ok:
+		goto end;
+	case parser_err:
+		err_desc(err, err_dsc, sizeof(err_dsc));
+		err = ok;
+		goto print;
+		break;
+	default:;
 	}
 
+	
+ err_print:
+	err_desc(err, err_dsc, sizeof(err_dsc));
+ print:		// call this directly to preserve the error state
+	printf("%s: %s\n", err_dsc, err_get_last());
+ end:
 	cleanup_tokenchain(tokenchain);
-
-	return ok;
+	return err;
 }
 
 sm_error tokenize(char *cmd, token *t)
@@ -36,8 +44,8 @@ sm_error tokenize(char *cmd, token *t)
 			in_quote = !in_quote;
 			goto end;
 		}
-		if(in_quote)
-			goto print;
+		if(in_quote) goto print;
+		if(c == '\n') goto end;
 		if(c == ' ') {
 			if(!buff_off) goto end;
 			buff[buff_off] = '\0';
@@ -73,5 +81,32 @@ void cleanup_tokenchain(token *t)
 		t = t->next;
 		free(tmp);
 	}
+}
+
+sm_error eval(token *tokenchain)
+{
+	command	*c;
+	char	buff[256];
+
+	for(int i = 0; i < sizeof(commands)/sizeof(commands[0]); ++i) {
+		c = &commands[i];
+		if(!strcmp(c->name, tokenchain->val))
+			return c->eval(tokenchain->next);
+	}
+
+	err_set_last(iprintf(buff, sizeof(buff),
+			     "Invalid command: %s",
+			     tokenchain->val));
+	return parser_err;
+}
+
+sm_error eval_run(token *tokenchain)
+{
+	puts("Running: ");
+
+	for(token *t = tokenchain; t; t = t->next) {
+		printf("Token: %s\n", t->val);
+	}
+
 	return ok;
 }

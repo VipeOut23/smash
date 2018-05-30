@@ -21,12 +21,13 @@ size_t err_desc(sm_error error, char *buff, size_t size)
 	size_t nwrite;
 
 	switch(error) {
-	case ok:		desc = "Ok. No error."; break;
-	case undefined:		desc = "Undefined error."; break;
+	case ok:		desc = "Ok"; break;
+	case undefined:		desc = "Undefined error"; break;
 	case invalid_args:	desc = "Invalid arguments"; break;
 	case buffer_overflow:	desc = "Buffer overflow"; break;
 	case unexpected_eof:	desc = "Unexpected EOF"; break;
 	case unistd_err:	desc = "Unistd library error"; break;
+	case parser_err:	desc = "Parser encounterd error"; break;
 	}
 
 	nwrite = strlen(desc);

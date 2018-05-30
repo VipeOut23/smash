@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ERR_COUNT 6
+#define ERR_COUNT 7
 
 /**
  * All error types
@@ -16,7 +16,8 @@ typedef enum {
 	invalid_args,
 	buffer_overflow,
 	unexpected_eof,
-	unistd_err
+	unistd_err,
+	parser_err
 } sm_error;
 
 /**

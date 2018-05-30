@@ -1,5 +1,16 @@
 #include "utils.h"
 
+char *iprintf(char *buff, size_t size, char *fmt, ...)
+{
+	va_list args;
+
+	va_start(args, fmt);
+	vsnprintf(buff, size, fmt, args);
+	va_end(args);
+
+	return buff;
+}
+
 sm_error utils_hostname(char* buff, size_t *nwrite)
 {
 	if(sm.cache_hostname) {

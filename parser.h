@@ -4,6 +4,7 @@
 #include <string.h>
 #include <bsd/string.h>
 #include "smash.h"
+#include "utils.h"
 #include "error.h"
 
 typedef struct token token;
@@ -11,6 +12,11 @@ struct token{
 	char *val;
 	token *next;	
 };
+
+typedef struct {
+	char *name;
+	sm_error (*eval)(token*);
+} command;
 
 /**
  * Parse a commandline
@@ -32,5 +38,24 @@ sm_error tokenize(char *cmd, token *t);
  * @param t the first element of the tokenchain
  */
 void cleanup_tokenchain(token *t);
+
+/**
+ * Evaluate the tokenchain
+ * @param tokenchain the tokenchain to evaluate
+ * @return error
+ */
+sm_error eval(token *tokenchain);
+
+/*
+ *******************************************************************************
+ * All evaluateable comments
+ *******************************************************************************
+ */
+sm_error eval_run(token *tokenchain);
+
+/* An index for the commands (searching will be from top to bottom) */
+static command commands[] = {
+	{"run", &eval_run}
+};
 
 #endif
