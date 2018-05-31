@@ -27,6 +27,7 @@ size_t err_desc(sm_error error, char *buff, size_t size)
 	case buffer_overflow:	desc = "Buffer overflow"; break;
 	case unexpected_eof:	desc = "Unexpected EOF"; break;
 	case unistd_err:	desc = "Unistd library error"; break;
+	case unistd_fork_err:	desc = "Fork error"; break;
 	case parser_err:	desc = "Parser encounterd error"; break;
 	}
 

@@ -102,11 +102,28 @@ sm_error eval(token *tokenchain)
 
 sm_error eval_run(token *tokenchain)
 {
-	puts("Running: ");
+	//TODO: Finish functionality
+	sm_error err;
+	char	 err_dsc[256];
+	char	 *argv[64];
+	int	 status;
+	int	 index = 0;
+	pid_t	 pid = 0;
 
-	for(token *t = tokenchain; t; t = t->next) {
-		printf("Token: %s\n", t->val);
+
+	for(token *t = tokenchain; t; t = t->next)
+		argv[index++] = t->val;
+
+	argv[index] = NULL;
+
+	if( (err = utils_exec(argv, &pid, &status)) ) {
+		err_desc(err, err_dsc, sizeof(err_dsc));
+		puts(err_dsc);
 	}
+	
 
-	return ok;
+	printf("[%d] Exit: %d\n", pid, status);
+
+	return err;
 }
+

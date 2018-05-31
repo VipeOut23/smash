@@ -9,7 +9,7 @@ typedef struct {
 	char promt[256];
 	char *cache_hostname;
 	char *cache_username;
-	char *cache_last_pwd;
+	char *cache_last_cwd;
 	sm_flags flags;
 } sm_values;
 

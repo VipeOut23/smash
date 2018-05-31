@@ -17,7 +17,8 @@ typedef enum {
 	buffer_overflow,
 	unexpected_eof,
 	unistd_err,
-	parser_err
+	unistd_fork_err,
+	parser_err,
 } sm_error;
 
 /**

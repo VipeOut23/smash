@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <bsd/string.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -41,12 +42,22 @@ sm_error utils_username(char* buff, size_t *nwrite);
  * @param nwrite the buffer's size (will be set to the actual bytes written)
  * @return error
  */
-sm_error utils_pwd(char *buff, size_t *nwrite);
+sm_error utils_cwd(char *buff, size_t *nwrite);
 
 /**
- * Updates the last cached pwd
+ * Updates the last cached cwd
  * @return error
  */
-sm_error utils_update_pwd();
+sm_error utils_update_cwd();
+
+/**
+ * executes a program
+ * @param argv the arguments to run the program (MUST be terminated with a nullpointer)
+ * @param pid if it points to a non-zero value the program will be called asynchron and
+ * pid will point to the child's pid; otherwise (zero-value) the program will run 
+ * in sync (blocking)
+ * @param status the return code of the program will be in there
+ */
+sm_error utils_exec(char **argv, pid_t *pid, int *status);
 
 #endif

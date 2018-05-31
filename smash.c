@@ -27,7 +27,7 @@ sm_error read_command(char *buff, size_t *nread)
 
 inline sm_error before_promt_hook()
 {
-	utils_update_pwd();
+	utils_update_cwd();
 	return ok;
 }
 
@@ -74,7 +74,7 @@ sm_error build_promt()
 				err = utils_username((char*) buff+off_b, &nwrite);
 				break;
 			case 'd':
-				err = utils_pwd((char*) buff+off_b, &nwrite);
+				err = utils_cwd((char*) buff+off_b, &nwrite);
 				break;
 			default: nwrite = 0;
 			}

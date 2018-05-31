@@ -41,23 +41,42 @@ sm_error utils_username(char* buff, size_t *nwrite)
 	return ok;
 }
 
-sm_error utils_pwd(char *buff, size_t *nwrite)
+sm_error utils_cwd(char *buff, size_t *nwrite)
 {
-	if(sm.cache_last_pwd)
-		*nwrite = strlcpy(buff, sm.cache_last_pwd, *nwrite);
+	if(sm.cache_last_cwd)
+		*nwrite = strlcpy(buff, sm.cache_last_cwd, *nwrite);
 	return ok;
 }
 
-sm_error utils_update_pwd()
+sm_error utils_update_cwd()
 {
-	char *var;
+	char buff[256];
 
-	if(!(var = getenv("PWD"))) return unistd_err;
-	if(!sm.cache_last_pwd || strcmp(var, sm.cache_last_pwd)) {
-		free(sm.cache_last_pwd);
-		sm.cache_last_pwd = strdup(var);
+	if(getcwd(buff, sizeof(buff)) < 0) return unistd_err;
+	if(!sm.cache_last_cwd || strcmp(buff, sm.cache_last_cwd)) {
+		free(sm.cache_last_cwd);
+		sm.cache_last_cwd = strdup(buff);
 		sm.flags.promt_refresh_needed = 1;
 	}
+
+	return ok;
+}
+
+sm_error utils_exec(char **argv, pid_t *pid, int *status)
+{
+	//TODO: Finish functionality
+	pid_t child_pid;
+
+	if(!(child_pid = fork())) {
+		execv(argv[0], argv);
+		exit(0);
+	}
+	else if(child_pid < 0)
+		return unistd_fork_err;
+
+	waitpid(child_pid, status, 0);
+
+	*pid = child_pid;
 
 	return ok;
 }
