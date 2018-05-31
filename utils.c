@@ -80,3 +80,26 @@ sm_error utils_exec(char **argv, pid_t *pid, int *status)
 
 	return ok;
 }
+
+sm_error utils_xfind(char *name, char *path, size_t size)
+{
+	char *env_path;
+	char bin_path[256];
+	char *token;
+
+	env_path = getenv("PATH");
+
+	while(token = strsep(&env_path, ":")) {
+		strcpy(bin_path, token);
+		strcat(bin_path, "/");
+		strcat(bin_path, name);
+		if(!access(bin_path, X_OK)) {
+			strncpy(path, bin_path, size);
+			return ok;
+		}
+	}
+
+	err_set_last(name);
+
+	return xfile_not_found;
+}

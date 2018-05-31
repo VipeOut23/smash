@@ -19,6 +19,7 @@ typedef enum {
 	unistd_err,
 	unistd_fork_err,
 	parser_err,
+	xfile_not_found
 } sm_error;
 
 /**

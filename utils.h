@@ -60,4 +60,14 @@ sm_error utils_update_cwd();
  */
 sm_error utils_exec(char **argv, pid_t *pid, int *status);
 
+/**
+ * Tries to find an executeable inside any of the paths in enviroment
+ * variable $PATH
+ * @param name the executeables name
+ * @param path the path will be written in there
+ * @param size size of the path buffer
+ * @return errors
+ */
+sm_error utils_xfind(char *name, char *path, size_t size);
+
 #endif

@@ -102,25 +102,28 @@ sm_error eval(token *tokenchain)
 
 sm_error eval_run(token *tokenchain)
 {
-	//TODO: Finish functionality
 	sm_error err;
-	char	 err_dsc[256];
+	char	 buff[256];
 	char	 *argv[64];
 	int	 status;
 	int	 index = 0;
 	pid_t	 pid = 0;
 
+	
+	/* Check if we need to update the path with a var from $PATH */
+	if(tokenchain->val[0] != '/' && tokenchain->val[0] != '.') {
+		err = utils_xfind(tokenchain->val, buff, sizeof(buff));
+		if(err) return err;
+		free(tokenchain->val);
+		tokenchain->val = strdup(buff);
+	}
 
 	for(token *t = tokenchain; t; t = t->next)
 		argv[index++] = t->val;
 
 	argv[index] = NULL;
 
-	if( (err = utils_exec(argv, &pid, &status)) ) {
-		err_desc(err, err_dsc, sizeof(err_dsc));
-		puts(err_dsc);
-	}
-	
+	err = utils_exec(argv, &pid, &status);
 
 	printf("[%d] Exit: %d\n", pid, status);
 

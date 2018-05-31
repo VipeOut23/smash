@@ -29,6 +29,7 @@ size_t err_desc(sm_error error, char *buff, size_t size)
 	case unistd_err:	desc = "Unistd library error"; break;
 	case unistd_fork_err:	desc = "Fork error"; break;
 	case parser_err:	desc = "Parser encounterd error"; break;
+	case xfile_not_found:	desc = "Executeable not found"; break;
 	}
 
 	nwrite = strlen(desc);
