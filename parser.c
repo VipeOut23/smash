@@ -9,24 +9,17 @@ sm_error parse_command(char *cmd)
 	tokenchain = malloc(sizeof(token));
 
 	if((err = tokenize(cmd, tokenchain)))
-		goto err_print;
+		goto end;
 
 	switch( (err = eval(tokenchain)) ) {
-	case ok:
-		goto end;
 	case parser_err:
 		err_desc(err, err_dsc, sizeof(err_dsc));
+		printf("%s: %s\n", err_dsc, err_get_last());
 		err = ok;
-		goto print;
 		break;
 	default:;
 	}
-
 	
- err_print:
-	err_desc(err, err_dsc, sizeof(err_dsc));
- print:		// call this directly to preserve the error state
-	printf("%s: %s\n", err_dsc, err_get_last());
  end:
 	cleanup_tokenchain(tokenchain);
 	return err;
@@ -123,10 +116,16 @@ sm_error eval_run(token *tokenchain)
 
 	argv[index] = NULL;
 
-	err = utils_exec(argv, &pid, &status);
+	if(err = utils_exec(argv, &pid, &status))
+		return err;
 
 	printf("[%d] Exit: %d\n", pid, status);
 
 	return err;
 }
 
+sm_error eval_exit(token *tokenchain)
+{
+	//TODO: Replace with some kind of cleanup routine
+	exit(0);
+}

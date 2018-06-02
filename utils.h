@@ -53,10 +53,11 @@ sm_error utils_update_cwd();
 /**
  * executes a program
  * @param argv the arguments to run the program (MUST be terminated with a nullpointer)
- * @param pid if it points to a non-zero value the program will be called asynchron and
+ * @param pid if it points to a non-zero value the program will be called asynchronously and
  * pid will point to the child's pid; otherwise (zero-value) the program will run 
- * in sync (blocking)
- * @param status the return code of the program will be in there
+ * in synchronously (blocking)
+ * @param status the return code of the program will be in there (only when the program
+ * is executed synchronously)
  */
 sm_error utils_exec(char **argv, pid_t *pid, int *status);
 

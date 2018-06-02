@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ERR_COUNT 7
+#define ERR_COUNT 9
 
 /**
  * All error types
@@ -23,14 +23,23 @@ typedef enum {
 } sm_error;
 
 /**
+ * All error severities
+ */
+typedef enum {
+	notice,
+	warn,
+	severe
+} sm_error_severity;
+
+/**
  * Saves an detailed error description for the last error
+ * this will overwrite the old error description
  * @param dsc the description
  */
 void err_set_last(char *dsc);
 
 /**
  * Get the detailed error description of the last error (set by err_set_last)
- * this will overwrite the old error description
  * @return a pointer to the description
  */
 char* err_get_last();
@@ -43,6 +52,13 @@ char* err_get_last();
  * @return how many bytes were written
  */
 size_t err_desc(sm_error error, char *buff, size_t size);
+
+/**
+ * Get the severity of an error
+ * @param error the error
+ * @return the severity
+ */
+sm_error_severity err_sev(sm_error error);
 
 /**
  * Writes all errors as a list to a buffer

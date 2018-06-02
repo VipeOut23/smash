@@ -47,7 +47,18 @@ sm_error promt()
 	if(err = read_command(buff, &nread)) return err;
 	buff[nread++] = '\0';
 
-	return parse_command(buff);
+	if((err = parse_command(buff))) {
+		switch(err_sev(err)) {
+		case warn:	/* Fall through */
+		case notice:
+			err_desc(err, buff, sizeof(buff));
+			fprintf(stderr, "%s: %s\n", buff, err_get_last());
+			return ok;
+		case severe: return err;
+		}
+	}
+
+	return ok;
 }
 
 sm_error build_promt()
@@ -102,11 +113,10 @@ int main(int argc, char **argv)
 
 	sm = (sm_values){0};
 
-	if(!err)
 	while(!(err = promt()));
 
 	err_desc(err, buff, 1024);
-	puts(buff);
+	fwrite(buff, 1, strlen(buff), stderr);
 
 	return 0;
 }

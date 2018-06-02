@@ -17,8 +17,9 @@ size_t err_desc(sm_error error, char *buff, size_t size)
 {
 	if(size < 0) return 0;
 
-	char   *desc;
-	size_t nwrite;
+	char		  *desc;
+	size_t		  nwrite;
+	sm_error_severity severity;
 
 	switch(error) {
 	case ok:		desc = "Ok"; break;
@@ -37,6 +38,22 @@ size_t err_desc(sm_error error, char *buff, size_t size)
 	strncpy(buff, desc, nwrite);
 
 	return nwrite;
+}
+
+sm_error_severity err_sev(sm_error error)
+{
+	switch(error) {
+	case ok:		return notice;
+	case undefined:		return notice;
+	case invalid_args:	return notice;
+	case buffer_overflow:	return warn;
+	case unexpected_eof:	return severe;
+	case unistd_err:	return severe;
+	case unistd_fork_err:	return severe;
+	case parser_err:	return notice;
+	case xfile_not_found:	return notice;
+	default:		return notice;
+	}
 }
 
 void err_list(char *buff, size_t size)

@@ -64,7 +64,6 @@ sm_error utils_update_cwd()
 
 sm_error utils_exec(char **argv, pid_t *pid, int *status)
 {
-	//TODO: Finish functionality
 	pid_t child_pid;
 
 	if(!(child_pid = fork())) {
@@ -74,7 +73,8 @@ sm_error utils_exec(char **argv, pid_t *pid, int *status)
 	else if(child_pid < 0)
 		return unistd_fork_err;
 
-	waitpid(child_pid, status, 0);
+	if(!*pid)
+		waitpid(child_pid, status, 0);
 
 	*pid = child_pid;
 
@@ -83,13 +83,14 @@ sm_error utils_exec(char **argv, pid_t *pid, int *status)
 
 sm_error utils_xfind(char *name, char *path, size_t size)
 {
-	char *env_path;
+	char env_path[1024];
+	char *env_path_ptr = env_path;
 	char bin_path[256];
 	char *token;
 
-	env_path = getenv("PATH");
+	strncpy(env_path, getenv("PATH"), sizeof(env_path));
 
-	while(token = strsep(&env_path, ":")) {
+	while(token = strsep(&env_path_ptr, ":")) {
 		strcpy(bin_path, token);
 		strcat(bin_path, "/");
 		strcat(bin_path, name);
