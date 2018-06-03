@@ -53,10 +53,12 @@ sm_error eval(token *tokenchain);
  */
 sm_error eval_run(token *tokenchain);
 sm_error eval_exit(token *tokenchain);
+sm_error eval_cd(token *tokenchain);
 
 /* An index for the commands (searching will be from top to bottom) */
 static command commands[] = {
 	{"run", &eval_run},
+	{"cd", &eval_cd},
 	{"exit", &eval_exit}
 };
 

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "smash.h"
 #include "error.h"
 
@@ -49,6 +50,13 @@ sm_error utils_cwd(char *buff, size_t *nwrite);
  * @return error
  */
 sm_error utils_update_cwd();
+
+/**
+ * Change the current working directory
+ * @param dir the directory
+ * @return error
+ */
+sm_error utils_change_dir(char *dir);
 
 /**
  * executes a program

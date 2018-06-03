@@ -27,14 +27,15 @@ size_t err_desc(sm_error error, char *buff, size_t size)
 	case invalid_args:	desc = "Invalid arguments"; break;
 	case buffer_overflow:	desc = "Buffer overflow"; break;
 	case unexpected_eof:	desc = "Unexpected EOF"; break;
-	case unistd_err:	desc = "Unistd library error"; break;
+	case unistd_err:	desc = "Unistd error"; break;
 	case unistd_fork_err:	desc = "Fork error"; break;
 	case parser_err:	desc = "Parser encounterd error"; break;
 	case xfile_not_found:	desc = "Executeable not found"; break;
 	}
 
 	nwrite = strlen(desc);
-	nwrite = (nwrite <= size)?nwrite:size;
+	nwrite = ((nwrite <= size)?nwrite:size);
+	buff[nwrite] = '\0';
 	strncpy(buff, desc, nwrite);
 
 	return nwrite;
@@ -43,12 +44,12 @@ size_t err_desc(sm_error error, char *buff, size_t size)
 sm_error_severity err_sev(sm_error error)
 {
 	switch(error) {
-	case ok:		return notice;
+	case ok:		return none;
 	case undefined:		return notice;
 	case invalid_args:	return notice;
 	case buffer_overflow:	return warn;
 	case unexpected_eof:	return severe;
-	case unistd_err:	return severe;
+	case unistd_err:	return notice;
 	case unistd_fork_err:	return severe;
 	case parser_err:	return notice;
 	case xfile_not_found:	return notice;

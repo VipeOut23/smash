@@ -43,8 +43,13 @@ sm_error utils_username(char* buff, size_t *nwrite)
 
 sm_error utils_cwd(char *buff, size_t *nwrite)
 {
-	if(sm.cache_last_cwd)
-		*nwrite = strlcpy(buff, sm.cache_last_cwd, *nwrite);
+	sm_error err;
+
+	if(sm.cache_last_cwd && (err = utils_update_cwd()) )
+		return err;
+
+	*nwrite = strlcpy(buff, sm.cache_last_cwd, *nwrite);
+
 	return ok;
 }
 
@@ -60,6 +65,27 @@ sm_error utils_update_cwd()
 	}
 
 	return ok;
+}
+
+sm_error utils_change_dir(char *dir)
+{
+	char buff[256];
+
+	dir = ((dir) ? dir : getenv("HOME"));
+
+	if(!chdir(dir))
+		return ok;
+
+	switch(errno) {
+	case EACCES:	err_set_last("Permission denied"); break;
+	case ENOENT:	err_set_last(iprintf(buff, sizeof(buff),
+					     "\"%s\" does not exist", dir)); break;
+	case ENOTDIR:	err_set_last(iprintf(buff, sizeof(buff),
+					     "\"%s\" is not a directory", dir)); break;
+	default:	err_set_last(strerror(errno));
+	}
+
+	return unistd_err;
 }
 
 sm_error utils_exec(char **argv, pid_t *pid, int *status)

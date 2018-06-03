@@ -26,6 +26,7 @@ typedef enum {
  * All error severities
  */
 typedef enum {
+	none,
 	notice,
 	warn,
 	severe

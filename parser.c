@@ -124,6 +124,18 @@ sm_error eval_run(token *tokenchain)
 	return err;
 }
 
+sm_error eval_cd(token *tokenchain)
+{
+	sm_error err;
+
+	if( (err = utils_change_dir((tokenchain)?tokenchain->val:NULL)) )
+		return err;
+
+	sm.flags.promt_refresh_needed = 1;
+
+	return ok;
+}
+
 sm_error eval_exit(token *tokenchain)
 {
 	//TODO: Replace with some kind of cleanup routine

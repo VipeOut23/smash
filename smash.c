@@ -49,6 +49,7 @@ sm_error promt()
 
 	if((err = parse_command(buff))) {
 		switch(err_sev(err)) {
+		case none: return ok;
 		case warn:	/* Fall through */
 		case notice:
 			err_desc(err, buff, sizeof(buff));
