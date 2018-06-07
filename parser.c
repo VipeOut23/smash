@@ -78,8 +78,8 @@ void cleanup_tokenchain(token *t)
 
 sm_error eval(token *tokenchain)
 {
-	command	*c;
-	char	buff[256];
+	command	 *c;
+	sm_error err;
 
 	for(int i = 0; i < sizeof(commands)/sizeof(commands[0]); ++i) {
 		c = &commands[i];
@@ -87,10 +87,8 @@ sm_error eval(token *tokenchain)
 			return c->eval(tokenchain->next);
 	}
 
-	err_set_last(iprintf(buff, sizeof(buff),
-			     "Invalid command: %s",
-			     tokenchain->val));
-	return parser_err;
+	/* Try to execute command */
+	return eval_run(tokenchain);
 }
 
 sm_error eval_run(token *tokenchain)
